@@ -1,15 +1,29 @@
 // src/screens/LoginScreen.js
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
+import axios from '../utils/axiosConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        // Handle login logic here
-        console.log('Login with:', email, password);
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post('/auth/login', { email, password });
+            const { token } = response.data;
+
+            // Store the token in AsyncStorage
+            await AsyncStorage.setItem('authToken', token);
+
+            Alert.alert('Success', 'Login successful', [
+                { text: 'OK', onPress: () => navigation.navigate('Home') },
+            ]);
+        } catch (error) {
+            Alert.alert('Error', error.response?.data?.error || 'Login failed');
+            console.error(error);
+        }
     };
 
     return (
