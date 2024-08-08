@@ -1,28 +1,69 @@
 // src/screens/LoginScreen.js
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import { TextInput, Button, Text } from 'react-native-paper';
+import { TextInput, Button, Text, HelperText } from 'react-native-paper';
 import axios from '../utils/axiosConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+
+    const validateInputs = () => {
+        let isValid = true;
+
+        if (!email) {
+            setEmailError('Email is required');
+            isValid = false;
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            setEmailError('Email is invalid');
+            isValid = false;
+        } else {
+            setEmailError('');
+        }
+
+        if (!password) {
+            setPasswordError('Password is required');
+            isValid = false;
+        } else if (password.length < 6) {
+            setPasswordError('Password must be at least 6 characters');
+            isValid = false;
+        } else {
+            setPasswordError('');
+        }
+
+        return isValid;
+    };
 
     const handleLogin = async () => {
+        if (!validateInputs()) {
+            return;
+        }
+
         try {
             const response = await axios.post('/auth/login', { email, password });
-            const { token } = response.data;
+            const { user, tokens } = await response.data;
 
             // Store the token in AsyncStorage
-            await AsyncStorage.setItem('authToken', token);
+            await AsyncStorage.setItem('authToken', tokens.accessToken);
+            await AsyncStorage.setItem('refreshToken', tokens.refreshToken);
+            // store user data
+            await AsyncStorage.setItem('userData', JSON.stringify(user));
 
-            Alert.alert('Success', 'Login successful', [
-                { text: 'OK', onPress: () => navigation.navigate('Home') },
-            ]);
+            // Navigate to Home screen
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Home' }],
+            });
         } catch (error) {
-            Alert.alert('Error', error.response?.data?.error || 'Login failed');
-            console.error(error);
+            let errorMessage = 'Login failed. Please try again.';
+            if (error.response) {
+                errorMessage = error.response.data.message || error.response.data.error || errorMessage;
+            }
+            Alert.alert('Error', errorMessage);
+            console.error('Login error:', error);
         }
     };
 
@@ -34,14 +75,24 @@ const LoginScreen = ({ navigation }) => {
                 value={email}
                 onChangeText={setEmail}
                 style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                error={!!emailError}
             />
+            <HelperText type="error" visible={!!emailError}>
+                {emailError}
+            </HelperText>
             <TextInput
                 label="Password"
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}
                 style={styles.input}
+                error={!!passwordError}
             />
+            <HelperText type="error" visible={!!passwordError}>
+                {passwordError}
+            </HelperText>
             <Button mode="contained" onPress={handleLogin} style={styles.button}>
                 Login
             </Button>
@@ -64,10 +115,10 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     input: {
-        marginBottom: 12,
+        marginBottom: 8,
     },
     button: {
-        marginTop: 12,
+        marginTop: 16,
     },
 });
 

@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const instance = axios.create({
     baseURL: 'https://sheltherbackend-gk6ws4agna-uc.a.run.app/api', // Replace with your backend URL
+    // baseURL: 'http://127.0.0.1:8000/api', // Development URL
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

@@ -21,19 +21,42 @@ const CompleteProfileScreen = ({ route, navigation }) => {
         }
 
         const userProfileData = {
-            email,
-            password,
-            name,
-            photo,
-            address,
-            contacts: contacts.split(','), // assuming comma separated contacts
-            places: places.split(','), // assuming comma separated places
-        };
+            "email": email,
+            "password": password,
+            "name": name,
+            "photo": photo,
+            "address": address,
+            "contacts": [
+                {
+                    "id": "contact3",
+                    "name": "Robert Brown",
+                    "phone": "+1123456789",
+                    "email": "robert.brown@example.com"
+                }
+            ],
+            "locations": [],
+            "places": [
+                {
+                    "id": "place1",
+                    "name": "Home",
+                    "latitude": 37.7749,
+                    "longitude": -122.4194
+                },
+                {
+                    "id": "place2",
+                    "name": "Work",
+                    "latitude": 37.7749,
+                    "longitude": -122.4194
+                }
+            ]
+        }
+
+
 
         try {
-            const response = await axios.post('/complete', userProfileData);
+            const response = await axios.post('/auth/complete', userProfileData);
             Alert.alert('Success', 'Profile completed successfully.', [
-                { text: 'OK', onPress: () => navigation.navigate('Login') },
+                { text: 'OK', onPress: () => navigation.navigate('Home') },
             ]);
         } catch (error) {
             Alert.alert('Error', error.response?.data?.error || 'Profile completion failed');

@@ -1,0 +1,27 @@
+{
+    "message": "Login successful",
+    "tokens": {
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InV6YTl0YWlsc0BnbWFpbC5jb20iLCJpYXQiOjE3MjMwNzg2NDQsImV4cCI6MTcyMzA4MjI0NH0.5fTbE_j5OICiegADT0Riybzt7ZcGxoZiHuUtEl7srVY",
+        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InV6YTl0YWlsc0BnbWFpbC5jb20iLCJpYXQiOjE3MjMwNzg2NDQsImV4cCI6MTcyMzY4MzQ0NH0.ZIVjJbQiUlvf0Do6HuhtToD0FbXwrlMgsKavx00URBw"
+    },
+    "user": {
+        "__v": 0,
+        "_id": "66b41585814a0cfed8aa9a3e",
+        "address": "Parklands ",
+        "contacts": [
+            [Object
+            ]
+        ],
+        "email": "uza9tails@gmail.com",
+        "locations": [],
+        "name": "Naruto",
+        "photo": "catphotoap.com",
+        "places": [
+            [Object
+            ],
+            [Object
+            ]
+        ],
+        "whatsapp": "254712414487"
+    }
+}
