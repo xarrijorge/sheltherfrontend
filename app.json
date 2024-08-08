@@ -25,7 +25,8 @@
       "favicon": "./assets/ico.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

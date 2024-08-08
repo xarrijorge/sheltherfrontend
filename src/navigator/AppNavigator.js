@@ -1,6 +1,4 @@
-// src/navigation/AppNavigator.js
 import React, { useEffect, useState } from 'react';
-import JWT from 'expo-jwt';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/Login';
@@ -11,13 +9,9 @@ import BottomTabNavigator from './BottomNavigator';
 import ProfileScreen from '../screens/Profile';
 import SettingsScreen from '../screens/Settings';
 import { Appbar, Avatar } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 const Stack = createStackNavigator();
-// set initial route to home if user is logged in.
-// const token = AsyncStorage.getItem('authToken');
-// const decodedToken = jwtDecode(token);
-// const initialRoute = decodedToken ? 'Home' : 'Login';
 
 const CustomNavigationBar = ({ navigation, previous }) => {
     return (
@@ -31,40 +25,24 @@ const CustomNavigationBar = ({ navigation, previous }) => {
 };
 
 const AppNavigator = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [initialRoute, setInitialRoute] = useState('Login');
-    const checkToken = async () => {
-        try {
-            const token = await AsyncStorage.getItem('authToken');
-            if (token) {
-                const decoded = JWT.decode(token);  // Use jwtDecode directly
-                console.log('Decoded token:', decoded);  // For debugging
-                // Check if the token is not expired
-                // if (decoded.exp > Date.now() / 1000) {
-                //     setInitialRoute('Home');
-                // }
-                setInitialRoute('Home');
-            }
-        } catch (error) {
-            console.error('Error checking token:', error);
-        } finally {
-            setIsLoading(false);
-        }
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    const fetchUser = async () => {
+        const userData = await SecureStore.getItemAsync('userData');
+        const { loggedIn } = JSON.parse(userData);
+        console.log('first', loggedIn);
+        setLoggedIn(loggedIn ? true : false);
     };
+
     useEffect(() => {
+        console.log('second', loggedIn);
+        fetchUser();
+    }, [loggedIn]);
 
-
-        checkToken();
-    }, []);
-
-    if (isLoading) {
-        // You can return a loading screen here if you want
-        return null;
-    }
 
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName={initialRoute}>
+            <Stack.Navigator initialRouteName={loggedIn ? 'Home' : 'Login'}>
                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="VerifyOTP" component={VerifyOTPScreen} options={{ headerShown: false }} />
